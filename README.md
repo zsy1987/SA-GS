@@ -1,8 +1,7 @@
 <p align="center">
 
   <h1 align="center">SA-GS: Alias-free 3D Gaussian Splatting</h1>
-  <h3 align="center"><a href="https://drive.google.com/file/d/1Q7KgGbynzcIEyFJV1I17HgrYz6xrOwRJ/view?usp=sharing">Paper</a> | <a href="https://arxiv.org/pdf/2311.16493.pdf">arXiv</a> | <a href="https://niujinshuchong.github.io/mip-splatting/">Project Page</a>  | <a href="https://niujinshuchong.github.io/mip-splatting-demo/">Online Viewer</a> </h3>
-  <div align="center"></div>
+  
 </p>
 
 
@@ -13,7 +12,7 @@
 </p>
 
 <p align="center">
-We introduce a 3D smoothing filter and a 2D Mip filter for 3D Gaussian Splatting (3DGS), eliminating multiple artifacts and achieving alias-free renderings.  
+We introduce a scale-adaptive 2D filter and intregation(super sampling) method for 3D Gaussian Splatting (3DGS), eliminating multiple artifacts and achieving alias-free renderings.  
 </p>
 <br>
 
@@ -50,14 +49,8 @@ python scripts/run_mipnerf360.py
 python scripts/run_mipnerf360_stmt.py 
 ```
 
-# Online viewer
-After training, you can fuse the 3D smoothing filter to the Gaussian parameters with
-```
-python create_fused_ply.py -m {model_dir}/{scene} --output_ply fused/{scene}_fused.ply"
-```
-Then use our [online viewer](https://niujinshuchong.github.io/mip-splatting-demo) to visualize the trained model.
 
 # Acknowledgements
-This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
+This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting). [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
 
 
