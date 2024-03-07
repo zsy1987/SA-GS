@@ -266,7 +266,7 @@ __global__ void preprocessCUDA(
 	lambda2 = mid - sqrt(max(0.0f, mid * mid - det));
 
 	// --------------------------------------------------------------------
-	#pragma region 特征向量计算
+
 	float2 evector1 = {1.0f, 0.0f};
 	float2 evector2 = {0.0f, 1.0f};
 	if(cov.x-(mid + sqrt(mid * mid - det))!=0){
@@ -283,7 +283,7 @@ __global__ void preprocessCUDA(
 		evector2.y = 1;
 		evector2.x = ((mid - sqrt(mid * mid - det))-cov.z) / cov.y;
 	}
-	//TODO: 特征值可能会出现<0情况,原本协方差不正定？
+
 	if(lambda1<0){
 		// evector1.x *= -1;
 		// evector1.y *= -1;
@@ -300,8 +300,7 @@ __global__ void preprocessCUDA(
 	evector1.y /= evector1_norm;
 	evector2.x /= evector2_norm;
 	evector2.y /= evector2_norm;
-	#pragma endregion
-    // --------------------------------------------------------------------
+
 
 	float2 point_image = { ndc2Pix(p_proj.x, W), ndc2Pix(p_proj.y, H) };
 	uint2 rect_min, rect_max;
@@ -498,9 +497,7 @@ renderCUDA(
 				float alpha_with_T_all = 0.0f;
 				for(int i1=int(-sub/2);i1<=int(sub/2);++i1){
 					if(done==true) break;
-					// if (i1%2!=0){continue;}
 					for(int j1=int(-sub/2);j1<=int(sub/2);++j1){
-						// if (j1%2!=0){continue;}
 						T = min(T, collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)]);
 						if(collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)] < 0.0001f){
 							cnt += 1;
@@ -512,8 +509,6 @@ renderCUDA(
 						float alpha = min(0.99f, con_o.w * exp(power));
 						if (alpha < 1.0f / 255.0f) continue;
 						alpha_with_T_all += alpha * collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)];
-						// 存储T检查
-						// if(alpha*collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)]>=0.01f && block.group_index().x==5 && block.group_index().y==1 && block.thread_index().x==9 && block.thread_index().y==11) printf("j=%d cf alpha %d %d is %f\n",j,i1,j1,alpha*collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)]);
 						collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)] *= (1 - alpha);
 					}
 				}
