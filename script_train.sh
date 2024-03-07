@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=1 python train_multi.py -s /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/nerf_synthetic_multiscale/chair -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/out_blender/chair/single_scale_source --save_iterations 1000 
