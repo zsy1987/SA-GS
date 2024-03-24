@@ -34,7 +34,17 @@ python convert_blender_data.py --blender_dir nerf_synthetic/ --out_dir multi-sca
 ## Mip-NeRF 360 Dataset
 Please download the data from the [Mip-NeRF 360](https://jonbarron.info/mipnerf360/) and request the authors for the treehill and flowers scenes.
 
-# Training and Evaluation
+Eventually, **model** folder should look like this:
+```
+<your/model/path>
+|-- point_cloud
+    |-- iteration_xxxx
+        |-- point_cloud.ply
+|-- cameras.json
+|-- cfg_args
+```
+
+# Testing
 ```
 # single-scale training and single-scale testing on NeRF-synthetic dataset
 python scripts/run_nerf_synthetic_stmt.py 
