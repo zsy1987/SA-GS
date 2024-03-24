@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="">
-    <img src="./media/bicycle_3dgs_vs_ours.gif" alt="Logo" width="95%">
+    <img src="./img/bicycle_zoomoutin.gif" alt="Logo" width="95%">
   </a>
 </p>
 
