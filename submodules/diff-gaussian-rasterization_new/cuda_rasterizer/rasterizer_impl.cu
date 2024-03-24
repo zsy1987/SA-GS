@@ -199,6 +199,7 @@ CudaRasterizer::BinningState CudaRasterizer::BinningState::fromChunk(char*& chun
 // Forward rendering procedure for differentiable rasterization
 // of Gaussians.
 int CudaRasterizer::Rasterizer::forward(
+	const int mode,
 	const int focal_mult,
 	std::function<char* (size_t)> geometryBuffer,
 	std::function<char* (size_t)> binningBuffer,
@@ -222,7 +223,6 @@ int CudaRasterizer::Rasterizer::forward(
 	float* out_color,
 	int* radii,
 	bool debug,
-	int mode,
 	const float kernel_ratio)
 {
 	const float focal_y = height / (2.0f * tan_fovy) *focal_mult;
@@ -349,11 +349,11 @@ int CudaRasterizer::Rasterizer::forward(
 	// Let each tile blend its range of Gaussians independently in parallel
 	const float* feature_ptr = colors_precomp != nullptr ? colors_precomp : geomState.rgb;
 	CHECK_CUDA(FORWARD::render(
-		mode,
 		tile_grid, block,
 		imgState.ranges,
 		binningState.point_list,
 		width, height,
+		mode,
 		geomState.means2D,
 		feature_ptr,
 		geomState.conic_opacity,

@@ -384,15 +384,15 @@ renderCUDA(
 	float C[CHANNELS] = { 0 };
 	
 	// ------------------------------------------------------------------------
-	if(mode==2){
-		const int sub = 3;
-		float sub_float =3.0f;
-		__shared__ float collected_subpixel_flag[BLOCK_SIZE*sub*sub];
-		for(int sub_idx=0;sub_idx<sub*sub;++sub_idx){
-				collected_subpixel_flag[block.thread_rank()*sub*sub+sub_idx] = subpixel_flag[block.thread_rank()*sub*sub+sub_idx];
-			}
-		block.sync();
-	}
+	// if(mode==2){
+	const int sub = 3;
+	float sub_float =3.0f;
+	__shared__ float collected_subpixel_flag[BLOCK_SIZE*sub*sub];
+	for(int sub_idx=0;sub_idx<sub*sub;++sub_idx){
+			collected_subpixel_flag[block.thread_rank()*sub*sub+sub_idx] = subpixel_flag[block.thread_rank()*sub*sub+sub_idx];
+		}
+	block.sync();
+	// }
 
 	// ------------------------------------------------------------------------
 
@@ -537,6 +537,7 @@ void FORWARD::render(
 	const dim3 grid, dim3 block,
 	const uint2* ranges,
 	const uint32_t* point_list,
+	const int mode,
 	int W, int H,
 	const float2* means2D,
 	const float* colors,

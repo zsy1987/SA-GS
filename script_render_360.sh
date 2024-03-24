@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=0 python render.py -s /data15/DISCOVER_winter2024/zhengj2401/360v2/bonsai -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/out_360v2/bonsai/multi --save_name outputs -r 1
+CUDA_VISIBLE_DEVICES=0 python render_360.py -s /data15/DISCOVER_winter2024/zhengj2401/360v2/bonsai -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/out_360v2/bonsai/multi --save_name outputs -r 1

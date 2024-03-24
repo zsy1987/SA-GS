@@ -91,6 +91,7 @@ RasterizeGaussiansCUDA(
       }
 
 	  rendered = CudaRasterizer::Rasterizer::forward(
+		mode,
 		focal_mult,
 	    geomFunc,
 		binningFunc,
@@ -115,7 +116,6 @@ RasterizeGaussiansCUDA(
 		out_color.contiguous().data<float>(),
 		radii.contiguous().data<int>(),
 		debug,
-		mode,
 		kernel_ratio);
   }
   return std::make_tuple(rendered, out_color, radii, geomBuffer, binningBuffer, imgBuffer);

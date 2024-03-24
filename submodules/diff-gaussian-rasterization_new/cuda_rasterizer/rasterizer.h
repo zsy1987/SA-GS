@@ -29,6 +29,7 @@ namespace CudaRasterizer
 			bool* present);
 
 		static int forward(
+			const int mode,
 			const int focal_mult,
 			std::function<char* (size_t)> geometryBuffer,
 			std::function<char* (size_t)> binningBuffer,
@@ -52,7 +53,6 @@ namespace CudaRasterizer
 			float* out_color,
 			int* radii = nullptr,
 			bool debug = false,
-			const int mode,
 			const float kernel_ratio = 1.0f);
 
 		static void backward(
