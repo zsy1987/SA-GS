@@ -23,7 +23,7 @@
 #include <fstream>
 #include <string>
 #include <functional>
-
+#include <chrono>
 std::function<char*(size_t N)> resizeFunctional(torch::Tensor& t) {
     auto lambda = [&t](size_t N) {
         t.resize_({(long long)N});
@@ -57,6 +57,10 @@ RasterizeGaussiansCUDA(
 	const int mode,
 	const float kernel_ratio)
 {
+
+//   printf("theta is %d\n", mode);
+
+  
   if (means3D.ndimension() != 2 || means3D.size(1) != 3) {
     AT_ERROR("means3D must have dimensions (num_points, 3)");
   }
@@ -81,6 +85,7 @@ RasterizeGaussiansCUDA(
   std::function<char*(size_t)> binningFunc = resizeFunctional(binningBuffer);
   std::function<char*(size_t)> imgFunc = resizeFunctional(imgBuffer);
   
+
   int rendered = 0;
   if(P != 0)
   {
@@ -89,10 +94,10 @@ RasterizeGaussiansCUDA(
 	  {
 		M = sh.size(1);
       }
-
+	//   auto start = std::chrono::high_resolution_clock::now();
 	  rendered = CudaRasterizer::Rasterizer::forward(
-		mode,
 		focal_mult,
+		mode,
 	    geomFunc,
 		binningFunc,
 		imgFunc,
@@ -117,7 +122,12 @@ RasterizeGaussiansCUDA(
 		radii.contiguous().data<int>(),
 		debug,
 		kernel_ratio);
+		auto end = std::chrono::high_resolution_clock::now(); 
+		// std::chrono::duration<double> elapsed = end - start;
+		// std::cout << "Function took " << elapsed.count() << " seconds to run." << std::endl;
   }
+
+
   return std::make_tuple(rendered, out_color, radii, geomBuffer, binningBuffer, imgBuffer);
 }
 

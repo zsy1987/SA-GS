@@ -21,7 +21,7 @@ from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args
 from gaussian_renderer import GaussianModel
 import time
-def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution):
+def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
     gts_path = os.path.join(model_path, name, save_name, "gt")
 
@@ -30,6 +30,7 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     res_train = int(model_path[-1])
     # res_train=1
     start_time = time.perf_counter()
+    
 
     # dict_width2resolution={
     #     800:1,
@@ -40,20 +41,14 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
         kernel_ratio=res_train/resolution
-        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio)["render"]
+        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
         torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
-        # break
-        # if idx>=20:
-        #     break
-    # 执行你的代码
-    # ...
 
-    # 记录结束时间
     end_time = time.perf_counter()
 
-    # 计算并打印执行时间
+
     elapsed_time = end_time - start_time
     print(f"代码执行时间: {elapsed_time} 秒")
 
@@ -64,6 +59,17 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         gaussians = GaussianModel(dataset.sh_degree)
         resolution=dataset.resolution
         dataset.resolution = -1
+        mode = dataset.mode
+
+        assert mode in["only filter" ,"source GS","integration","super sampling"]
+
+
+        if mode == "only filter": mode=3
+        elif mode=="source GS": mode=0
+        elif mode=="integration": mode=1
+        elif mode=="super sampling": mode=2
+        else: raise Exception("Not allowed this mode")
+        
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])
 
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
@@ -73,12 +79,12 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         #      render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background, kernel_ratio=1/resolution)
         # skip_test=True
         # if not skip_test:
-        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution)
+        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
     parser = ArgumentParser(description="Testing script parameters")
-    model = ModelParams(parser, sentinel=True)
+    model = ModelParams(parser, sentinel=False)
     pipeline = PipelineParams(parser)
     parser.add_argument("--iteration", default=-1, type=int)
     parser.add_argument("--skip_train", action="store_true")

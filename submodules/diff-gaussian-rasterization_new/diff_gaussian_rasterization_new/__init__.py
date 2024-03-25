@@ -81,7 +81,7 @@ class _RasterizeGaussians(torch.autograd.Function):
             raster_settings.mode,
             raster_settings.kernel_ratio
         )
-
+        
         # Invoke C++/CUDA rasterizer
         if raster_settings.debug:
             cpu_args = cpu_deep_copy_tuple(args) # Copy them before they can be corrupted
@@ -177,7 +177,7 @@ class GaussianRasterizationSettings(NamedTuple):
     campos : torch.Tensor
     prefiltered : bool
     debug : bool
-    model: int
+    mode: int
     focal_mult: int
     decay_rate: torch.Tensor
     kernel_ratio: float

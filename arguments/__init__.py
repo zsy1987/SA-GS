@@ -36,6 +36,8 @@ class ParamGroup:
                     group.add_argument("--" + key, default=value, action="store_true")
                 else:
                     group.add_argument("--" + key, default=value, type=t)
+                    # if key=="resolution_str":
+                    #     print("------------------------------------------------------222")
 
     def extract(self, args):
         group = GroupParams()
@@ -51,18 +53,20 @@ class ModelParams(ParamGroup):
         self._model_path = ""
         self._images = "images"
         self._resolution = -1
-        self.save_name = "source"
         self.resolution_str = "d0.png"
+        self.save_name = "source"
         self._white_background = False
         self.data_device = "cuda"
         self.eval = False
         self.load_allres = False
         self.mode = "only filter" # "only filter" ,"source GS", "integration", "super sampling"
+
         super().__init__(parser, "Loading Parameters", sentinel)
 
     def extract(self, args):
         g = super().extract(args)
         g.source_path = os.path.abspath(g.source_path)
+        # print(g)
         return g
 
 class PipelineParams(ParamGroup):
