@@ -60,40 +60,25 @@ Eventually, **model** folder should look like this:
 # Train(Vinilla 3D Gaussian Splatting)
 ```
 # single-scale training on NeRF-Synthetic dataset
-<<<<<<< HEAD
 python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source-GS --resolution_str d0.png
+
 # multi-scale training on NeRF-Synthetic dataset
 python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source-GS --load_allres
+
 # single-scale training on Mip-NeRF 360 dataset
 python train.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_scale_1 --save_iterations 30000 --mode source-GS --scale 1
-=======
-python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source GS
-# multi-scale training on NeRF-Synthetic dataset
-
-# single-scale training on Mip-NeRF 360 dataset
-
->>>>>>> 7e135f9cbd37c0e3f76f91979ba5fe0b434cfc78
 ```
 
 # Test(Our SA-GS Rendering)
 ```
-<<<<<<< HEAD
 # Multi-scale testing on NeRF-synthetic dataset
 python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --load_allres --mode integration
-=======
-# single-scale training and single-scale testing on NeRF-synthetic dataset
-python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --load_allres --mode integration
-
->>>>>>> 7e135f9cbd37c0e3f76f91979ba5fe0b434cfc78
 
 # Single-scale testing on NeRF-synthetic dataset
 python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --resolution_str d0.png --mode integration 
 
-<<<<<<< HEAD
+
 # Single-scale testing on the mip-nerf 360 dataset
-=======
-# single-scale training and single-scale testing on the mip-nerf 360 dataset
->>>>>>> 7e135f9cbd37c0e3f76f91979ba5fe0b434cfc78
 python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
 
 # mode "only-filter" ,"source-GS", "integration", "super-sampling"
@@ -103,8 +88,3 @@ python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --s
 
 # Acknowledgements
 This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/SA-GS). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 7e135f9cbd37c0e3f76f91979ba5fe0b434cfc78
