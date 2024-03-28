@@ -41,7 +41,9 @@ Please download the data from the [Mip-NeRF 360](https://jonbarron.info/mipnerf3
 
 
 ## Model
+Please download and unzip models.zip from the [Google Drive](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1).
 Eventually, **model** folder should look like this:
+
 ```
 <your/model/path>
 |-- point_cloud
