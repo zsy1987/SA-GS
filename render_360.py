@@ -38,6 +38,7 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     #     200:4,
     #     100:8
     # }
+    
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
         kernel_ratio=res_train/resolution

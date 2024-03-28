@@ -1,6 +1,6 @@
 <p align="center">
 
-  <h1 align="center">SA-GS: Alias-free 3D Gaussian Splatting</h1>
+  <h1 align="center">SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing</h1>
   
 </p>
 
@@ -47,16 +47,15 @@ Eventually, **model** folder should look like this:
 # Testing
 ```
 # single-scale training and single-scale testing on NeRF-synthetic dataset
-python scripts/run_nerf_synthetic_stmt.py 
+CUDA_VISIBLE_DEVICES=0  python render_blender.py -s /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting3/nerf_synthetic_multiscale/chair -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting3/out_blender/chair/single_scale_s1 --save_name output --eval --load_allres --mode integration
 
-# multi-scale training and multi-scale testing on NeRF-synthetic dataset
-python scripts/run_nerf_synthetic_mtmt.py 
+
 
 # single-scale training and single-scale testing on the mip-nerf 360 dataset
-python scripts/run_mipnerf360.py 
+CUDA_VISIBLE_DEVICES=0 python render_360.py -s /data15/DISCOVER_winter2024/zhengj2401/360v2/bonsai -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
 
-# single-scale training and multi-scale testing on the mip-nerf 360 dataset
-python scripts/run_mipnerf360_stmt.py 
+# mode "only filter" ,"source GS", "integration", "super sampling"
+
 ```
 
 
