@@ -83,6 +83,6 @@ python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --s
 
 
 # Acknowledgements
-This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting). [Mip-splatting](https://github.com/autonomousvision/SA-GS). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
+This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/SA-GS). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
 
 
