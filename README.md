@@ -6,7 +6,7 @@ This repository is an official implementation for:
 
 **SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing**
 
-> Authors:  [_Xiaowei Song_*](https://kevinSONG729.github.io/), _Jv Zheng_*, _Shiran Yuan_, [_Huan-ang Gao_](https://c7w.tech/about/), _Jingwei Zhao_, _Xiang He_, _ Weihao Gu_, [_Hao Zhao_](https://sites.google.com/view/fromandto)
+> Authors:  [_Xiaowei Song_*](https://kevinSONG729.github.io/), _Jv Zheng_*, _Shiran Yuan_, [_Huan-ang Gao_](https://c7w.tech/about/), _Jingwei Zhao_, _Xiang He_, _Weihao Gu_, [_Hao Zhao_](https://sites.google.com/view/fromandto)
 
 <p align="center">
   <a href="">
