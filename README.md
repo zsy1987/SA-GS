@@ -27,7 +27,6 @@ cd SA-GS
 conda create -y -n SA-GS python=3.8
 conda activate SA-GS
 pip install -r requirements.txt
-pip install submodules/diff-gaussian-rasterization
 pip install submodules/simple-knn/
 pip install submodules/diff-gaussian-rasterization_new
 ```
@@ -54,6 +53,13 @@ Eventually, **model** folder should look like this:
         |-- point_cloud.ply
 |-- cameras.json
 |-- cfg_args
+```
+
+# Train 3D gaussian splatting
+```
+# single-scale training and single-scale testing on NeRF-synthetic dataset
+CUDA_VISIBLE_DEVICES=0 python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source GS
+
 ```
 
 # Testing
