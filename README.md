@@ -1,6 +1,6 @@
 # SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing
   
-[[Paper](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
+[[Paper](https://drive.google.com/file/d/1uVSdYOXreEuntpswW3HXV-TypKi-ZopQ/view?usp=drive_link)] | [[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
 
 This repository is an official implementation for:
 
