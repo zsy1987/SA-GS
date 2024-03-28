@@ -20,8 +20,13 @@ We introduce a scale-adaptive 2D filter and intregation(super sampling) method f
 # Installation
 
 ```
+cd SA-GS
+conda create -y -n SA-GS python=3.8
+conda activate SA-GS
+pip install -r requirements.txt
+pip install submodules/diff-gaussian-rasterization
+pip install submodules/simple-knn/
 pip install submodules/diff-gaussian-rasterization_new
-
 ```
 
 # Dataset
@@ -34,6 +39,8 @@ python convert_blender_data.py --blender_dir nerf_synthetic/ --out_dir multi-sca
 ## Mip-NeRF 360 Dataset
 Please download the data from the [Mip-NeRF 360](https://jonbarron.info/mipnerf360/) and request the authors for the treehill and flowers scenes.
 
+
+## Model
 Eventually, **model** folder should look like this:
 ```
 <your/model/path>
@@ -60,6 +67,6 @@ CUDA_VISIBLE_DEVICES=0 python render_360.py -s /data15/DISCOVER_winter2024/zheng
 
 
 # Acknowledgements
-This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting). [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
+This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting). [Mip-splatting](https://github.com/autonomousvision/SA-GS). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
 
 
