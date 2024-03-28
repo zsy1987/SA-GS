@@ -4,9 +4,7 @@
   
 </p>
 
-<p align="center">
-  [project page](https://kevinsong729.github.io/project-pages/SA-GS/)
-</p>
+[project page](https://kevinsong729.github.io/project-pages/SA-GS/)
 <p align="center">
   <a href="">
     <img src="./img/bicycle_zoomoutin.gif" alt="Logo" width="95%">
