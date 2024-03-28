@@ -28,17 +28,7 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     makedirs(render_path, exist_ok=True)
     makedirs(gts_path, exist_ok=True)
     res_train = int(model_path[-1])
-    # res_train=1
-    start_time = time.perf_counter()
-    
 
-    # dict_width2resolution={
-    #     800:1,
-    #     400:2,
-    #     200:4,
-    #     100:8
-    # }
-    
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
         kernel_ratio=res_train/resolution
@@ -47,11 +37,7 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
         torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
 
-    end_time = time.perf_counter()
 
-
-    elapsed_time = end_time - start_time
-    print(f"代码执行时间: {elapsed_time} 秒")
 
 
 
@@ -76,10 +62,6 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
 
-        # if not skip_train:
-        #      render_set(dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background, kernel_ratio=1/resolution)
-        # skip_test=True
-        # if not skip_test:
         render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":

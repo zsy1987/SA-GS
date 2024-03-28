@@ -28,7 +28,6 @@ def render_set(mode,save_name,model_path, name, iteration, views, gaussians, pip
     makedirs(render_path, exist_ok=True)
     makedirs(gts_path, exist_ok=True)
     res_train = int(model_path[-1])
-    start_time = time.perf_counter()
 
     dict_width2resolution={
         800:1,
@@ -45,18 +44,7 @@ def render_set(mode,save_name,model_path, name, iteration, views, gaussians, pip
         
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
         torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
-        # break
-        # if idx>=20:
-        #     break
-    # 执行你的代码
-    # ...
 
-    # 记录结束时间
-    end_time = time.perf_counter()
-
-    # 计算并打印执行时间
-    elapsed_time = end_time - start_time
-    print(f"代码执行时间: {elapsed_time} 秒")
 
 
 

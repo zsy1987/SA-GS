@@ -1,6 +1,6 @@
 # SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing
 
-[[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[3DGS Model](https://kevinsong729.github.io/project-pages/SA-GS/)]
+[[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
 
 This repository is an official implementation for:
 
@@ -43,7 +43,7 @@ Please download the data from the [Mip-NeRF 360](https://jonbarron.info/mipnerf3
 
 
 ## Model
-Please download and unzip models.zip from the [Google Drive](https://drive.google.com/drive/folders/128yBriW1IG_3NJ5Rp7APSTZsJqdJdfc1).
+Please download and unzip models.zip from the [Google Drive](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link).
 Eventually, **model** folder should look like this:
 
 ```
