@@ -38,9 +38,6 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
         torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
 
 
-
-
-
 def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParams, skip_train : bool, skip_test : bool):
     with torch.no_grad():
         gaussians = GaussianModel(dataset.sh_degree)
@@ -48,13 +45,13 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         dataset.resolution = -1
         mode = dataset.mode
 
-        assert mode in["only filter" ,"source GS","integration","super sampling"]
+        assert mode in["only-filter" ,"source-GS","integration","super-sampling"]
 
 
-        if mode == "only filter": mode=3
-        elif mode=="source GS": mode=0
+        if mode == "only-filter": mode=3
+        elif mode=="source-GS": mode=0
         elif mode=="integration": mode=1
-        elif mode=="super sampling": mode=2
+        elif mode=="super-sampling": mode=2
         else: raise Exception("Not allowed this mode")
         
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])

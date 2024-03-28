@@ -254,7 +254,6 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	// rectangle covers 0 tiles. 
 	float mid = 0.5f * (cov.x + cov.z);
 
-	// 特征向量计算 max(0.1f,...)是为了计算my_radius, 后面换回max(0.0f,...)是为了计算evector的准确性
 	float lambda1 = mid + sqrt(max(0.1f, mid * mid - det));
 	float lambda2 = mid - sqrt(max(0.1f, mid * mid - det));
 	float my_radius = ceil(3.f * sqrt(max(lambda1, lambda2)));
@@ -262,7 +261,7 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	lambda2 = mid - sqrt(max(0.0f, mid * mid - det));
 
 	// --------------------------------------------------------------------
-	#pragma region 特征向量计算
+	#pragma region 
 	float2 evector1 = {1.0f, 0.0f};
 	float2 evector2 = {0.0f, 1.0f};
 	if(cov.x-(mid + sqrt(mid * mid - det))!=0){
@@ -279,7 +278,7 @@ __global__ void preprocessCUDA(int P, int D, int M,
 		evector2.y = 1;
 		evector2.x = ((mid - sqrt(mid * mid - det))-cov.z) / cov.y;
 	}
-	//TODO: 特征值可能会出现<0情况,原本协方差不正定？
+
 	if(lambda1<0){
 		// evector1.x *= -1;
 		// evector1.y *= -1;
@@ -322,7 +321,6 @@ __global__ void preprocessCUDA(int P, int D, int M,
 	// Inverse 2D covariance and opacity neatly pack into one float4
 	conic_opacity[idx] = { conic.x, conic.y, conic.z, opacities[idx]};
 	tiles_touched[idx] = (rect_max.y - rect_min.y) * (rect_max.x - rect_min.x);
-	// 新增特征向量、特征值属性，用于后续积分计算
 	eigenvector[idx] = {evector1.x, evector1.y, evector2.x, evector2.y};
 	lambda[idx] = {lambda1, lambda2};
 }
@@ -382,7 +380,7 @@ renderCUDA(
 	float C[CHANNELS] = { 0 };
 	
 	// ------------------------------------------------------------------------
-	#pragma region 超采设置
+	#pragma region 
 	const int sub = 3;
 	float sub_float =3.0f;
 	__shared__ float collected_subpixel_flag[BLOCK_SIZE*sub*sub];
@@ -473,36 +471,12 @@ renderCUDA(
 
 			// --------------------------------------------------------------------
 			else if (mode==1){
-				// 根据协方差的逆，重新求协方差
-				// float det = (con_o.x * con_o.z - con_o.y * con_o.y);
-				// if (det == 0.0f)
-				// 	return;
-				// float det_inv = 1.f / det;
-				// float3 conv = { con_o.z * det_inv, -con_o.y * det_inv, con_o.x * det_inv };
-				
 				float pi = 3.1415926;
 				float pixel_weight = 0.5f;
 
-				// 线性求像素积分区域
-				// float theta = acos(eigen_vector_o.x) / (2*pi) * 360;
-				// if(eigen_vector_o.y<0.0f) theta = -theta + 180;
-				// int theta_s = int(theta / 45.0f);
-				// float theta_y = (int(theta) % 45) / 45.0f;
-				// if(theta_s%2==0){
-				// 	pixel_weight = 0.5f*(1-theta_y)+0.35f*theta_y;
-				// }else{
-				// 	pixel_weight = 0.5f*(theta_y)+0.35f*(1-theta_y);
-				// }
-
-				// 非线性求像素积分区域
 				float theta = acos(eigen_vector_o.x);
 				pixel_weight = 1 / (2 * (std::sin(theta) + std::cos(theta)));
 
-				// 像素积分区域打印检查
-				// if(block.thread_rank()==0) printf("theta is %f\n", theta);
-				// if(block.thread_rank()==0) printf("pixel_weight is %f\n", pixel_weight);
-
-				//像素中心对称四个角点遍历
 				float offset[8] = {-1, 1, 1, 1, -1, -1, 1, -1};
 				float2 x_range = {10000.0f, -10000.0f};
 				float2 y_range = {10000.0f, -10000.0f};
@@ -514,11 +488,6 @@ renderCUDA(
 					x_range.y = max(x_range.y, dot1);
 					y_range.x = min(y_range.x, dot2);
 					y_range.y = max(y_range.y, dot2);
-					// 像素角点坐标、高斯坐标、特征向量垂直、投影长度 检查
-					// if(block.thread_rank()==0) printf("block:%d %d i1:%d offset is %f, %f\n", block.group_index().y, block.group_index().x, i1, pixf.x+offset[i1]*pixel_weight, pixf.y+offset[i1+1]*pixel_weight);
-					// if(block.thread_rank()==0) printf("block:%d %d i1:%d gaussian is %f, %f\n", block.group_index().y, block.group_index().x, i1, xy.x, xy.y);
-					// if(block.thread_rank()==0) printf("block:%d %d i1:%d eigen_vector_o? %f\n", block.group_index().y, block.group_index().x, i1, eigen_vector_o.x * eigen_vector_o.z + eigen_vector_o.y * eigen_vector_o.w);
-					// if(block.thread_rank()==0) printf("block:%d %d i1:%d dot1 dot2 is %f, %f\n", block.group_index().y, block.group_index().x, i1, dot1, dot2);
 				}
 
 				x_range.x = x_range.x / sqrt(lambda.x);
@@ -526,88 +495,13 @@ renderCUDA(
 				y_range.x = y_range.x / sqrt(lambda.y);
 				y_range.y = y_range.y / sqrt(lambda.y);
 
-
-				// TODO: 积分区域过高斯均值是否会对积分准确性造成影响？（高斯均值附近导数最大，容易带来误差） 实验代码
-				// if(x_range.x*x_range.y<0 || x_range.x*x_range.y<0){
-				// if(block.thread_rank()==0) printf("block:%d %d  x_range.x x_range.y is %f, %f\n", block.group_index().y, block.group_index().x, x_range.x, x_range.y);
-				// if(block.thread_rank()==0) printf("block:%d %d  y_range.x y_range.y is %f, %f\n", block.group_index().y, block.group_index().x, y_range.x, y_range.y);
-				// if(block.thread_rank()==0) printf("block:%d %d  CND(x_range.x) CND(x_range.y) is %f, %f\n", block.group_index().y, block.group_index().x, CND(x_range.x), CND(x_range.y));
-				// if(block.thread_rank()==0) printf("block:%d %d  CND(y_range.x) CND(y_range.y) is %f, %f\n", block.group_index().y, block.group_index().x, CND(y_range.x), CND(y_range.y));
-				// if(x_range.x*x_range.y<0) x_range.x = 0.0f;
-				// if(y_range.x*y_range.y<0) y_range.x = 0.0f;
-				// if(block.thread_rank()==0) printf("block:%d %d  trunced x_range.x x_range.y is %f, %f\n", block.group_index().y, block.group_index().x, x_range.x, x_range.y);
-				// if(block.thread_rank()==0) printf("block:%d %d  trunced y_range.x y_range.y is %f, %f\n", block.group_index().y, block.group_index().x, y_range.x, y_range.y);
-				// if(block.thread_rank()==0) printf("block:%d %d  CND(x_range.x) CND(x_range.y) is %f, %f\n", block.group_index().y, block.group_index().x, CND(x_range.x), CND(x_range.y));
-				// if(block.thread_rank()==0) printf("block:%d %d  CND(y_range.x) CND(y_range.y) is %f, %f\n", block.group_index().y, block.group_index().x, CND(y_range.x), CND(y_range.y));
-				// }
-
-
-				// TODO: 高斯到像素距离是否会对积分准确性造成影响？（让距离远的高斯权重增大） 实验代码
-				// float distanceFromCenter = sqrt((xy.x - pixf.x) * (xy.x - pixf.x) + (xy.y - pixf.y) * (xy.y - pixf.y));
-				// float x_d = abs(xy.x - pixf.x);
-				// float y_d = abs(xy.y - pixf.y);
-				// // float distanceWeight = 1/sqrt(1.0f + distanceFromCenter*2);
-				// float dw_x = 1/(sqrt(2*3.1415926)*con_o.x)*std::exp(-x_d*x_d/(2*con_o.x*con_o.x));
-				// float dw_y = 1/(sqrt(2*3.1415926)*con_o.z)*std::exp(-y_d*y_d/(2*con_o.z*con_o.z));
-				// float distanceWeight = sqrt(dw_x*dw_x+dw_y*dw_y);
-				// // float distanceWeight = (dw_x*dw_x+dw_y*dw_y)/2;
-				// if (distanceFromCenter<0.60) distanceWeight = 1.0f;
-				// if (distanceFromCenter>0.95) distanceWeight = 1.0f;
-				// // float distanceFromCenter = sqrt((xy.x - pixf.x) * (xy.x - pixf.x) + (xy.y - pixf.y) * (xy.y - pixf.y));
-				// // float distanceWeight = 1/sqrt(1.0f + distanceFromCenter*2);
-				// // float distanceWeight = 1/(sqrt(2*3.1415926)*con_o.x)*std::exp(-distanceFromCenter*distanceFromCenter/(2*con_o.x*con_o.x));
-				// // if (distanceFromCenter<0.5) distanceWeight = 1.0f;
-				// // if (distanceFromCenter>0.9) distanceWeight = 1.0f;
-				
-
-				// 积分核心 alpha计算
-				// 1. erfc 回到一般高斯 版本
-				// float pdf_xmin = 0.5 * erfc(-x_range.x * sqrt(0.5f));
-				// float pdf_xmid = 0.5 * erfc(-(x_range.y-x_range.x)/2 * sqrt(0.5f));
-				// float pdf_xmax = 0.5 * erfc(-x_range.y * sqrt(0.5f));
-				// float pdf_ymin = 0.5 * erfc(-y_range.x * sqrt(0.5f));
-				// float pdf_ymid = 0.5 * erfc(-(y_range.y-y_range.x)/2 * sqrt(0.5f));
-				// float pdf_ymax = 0.5 * erfc(-y_range.y * sqrt(0.5f));
-
-				
-				// float4 cdf_xy = {pdf_xmid-pdf_xmin, pdf_xmax-pdf_xmid,pdf_ymid-pdf_ymin, pdf_ymax-pdf_ymid };
-				
-
-				// float alpha = 2*3.1416*con_o.w *\
-				// 			  (sqrt(lambda.x)*(cdf_xy.x * T4.x + cdf_xy.y * T4.y) *\
-				// 			   sqrt(lambda.y)*(cdf_xy.z * T4.z + cdf_xy.w *T4.w))/\
-				// 			   ((x_range.y*sqrt(lambda.x)-x_range.x*sqrt(lambda.x))*(y_range.y*sqrt(lambda.y)-y_range.x*sqrt(lambda.y)));
-
 				float alpha = 2*3.1416*con_o.w *\
 							(sqrt(lambda.x)*(0.5 * erfc(-x_range.y * sqrt(0.5f)) - 0.5 * erfc(-x_range.x * sqrt(0.5f))) *\
 							sqrt(lambda.y)*(0.5 * erfc(-y_range.y * sqrt(0.5f)) - 0.5 * erfc(-y_range.x * sqrt(0.5f))))/\
 							((x_range.y*sqrt(lambda.x)-x_range.x*sqrt(lambda.x))*(y_range.y*sqrt(lambda.y)-y_range.x*sqrt(lambda.y)));
 
-
-				// // 2. CND 回到一般高斯 版本
-				// float alpha = 2*3.1416*con_o.w *\
-				// 			   (sqrt(lambda.x)*(CND(x_range.y) - CND(x_range.x)) *\
-				// 				sqrt(lambda.y)*(CND(y_range.y) - CND(y_range.x)))/\
-				// 				((x_range.y*sqrt(lambda.x)-x_range.x*sqrt(lambda.x))*(y_range.y*sqrt(lambda.y)-y_range.x*sqrt(lambda.y)));
-				// 3. erfc 标准高斯 版本
-				// float alpha = 2*3.1416*con_o.w * ((0.5 * erfc(-x_range.y * sqrt(0.5f)) - 0.5 * erfc(-x_range.x * sqrt(0.5f))) * (0.5 * erfc(-y_range.y * sqrt(0.5f)) - 0.5 * erfc(-y_range.x * sqrt(0.5f)))) / ((x_range.x-x_range.y)*(y_range.x-y_range.y));
-				// alpha *= distanceWeight;
-
-				// 特定像素点 alpha 检查
-				// if(alpha*T>=0.01f && block.group_index().x==5 && block.group_index().y==1 && block.thread_index().x==8 && block.thread_index().y==10) printf("j=%d jifen alpha is %f\n", j, alpha*T);
 				alpha = min(0.99f, alpha);
 				if (alpha < 1.0f / 255.0f) continue;
-
-				// 原始高alpha区域 积分参数检查
-				// if(alpha_raw>0.1f){
-				// 	if(block.thread_rank()==0) printf("alpha_raw, power_raw is %f, %f\n", alpha_raw, power_raw);
-				// 	if(block.thread_rank()==0) printf("lambda is %f, %f\n", lambda.x, lambda.y);
-				// 	if(block.thread_rank()==0) printf("xrange is %f, %f\n", x_range.x, x_range.y);
-				// 	if(block.thread_rank()==0) printf("yrange is %f, %f\n", y_range.x, y_range.y);
-				// 	if(block.thread_rank()==0) printf("erfc_x is %f, %f\n", erfc(-x_range.y * sqrt(0.5f)), erfc(-x_range.x * sqrt(0.5f)));
-				// 	if(block.thread_rank()==0) printf("erfc_y is %f, %f\n", erfc(-y_range.y * sqrt(0.5f)), erfc(-y_range.x * sqrt(0.5f)));
-				// 	if(block.thread_rank()==0) printf("alpha is %f\n", alpha);
-				// }
 
 				float test_T = T * (1 - alpha);
 				if (test_T < 0.0001f)
@@ -625,9 +519,7 @@ renderCUDA(
 				float alpha_with_T_all = 0.0f;
 				for(int i1=int(-sub/2);i1<=int(sub/2);++i1){
 					if(done==true) break;
-					// if (i1%2!=0){continue;}
 					for(int j1=int(-sub/2);j1<=int(sub/2);++j1){
-						// if (j1%2!=0){continue;}
 						if(collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)] < 0.0001f){
 							cnt += 1;
 							if(cnt>=sub*sub){done=true;break;}
@@ -638,8 +530,6 @@ renderCUDA(
 						float alpha = min(0.99f, con_o.w * exp(power));
 						if (alpha< 1.0f / 255.0f) continue;
 						alpha_with_T_all += alpha * collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)];
-						// 存储T检查
-						// if(alpha*collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)]>=0.01f && block.group_index().x==5 && block.group_index().y==1 && block.thread_index().x==9 && block.thread_index().y==11) printf("j=%d cf alpha %d %d is %f\n",j,i1,j1,alpha*collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)]);
 						collected_subpixel_flag[block.thread_rank()*sub*sub+(j1+int(sub/2))*sub+i1+int(sub/2)] *= (1 - alpha);
 					}
 				}

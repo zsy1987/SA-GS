@@ -59,7 +59,8 @@ class ModelParams(ParamGroup):
         self.data_device = "cuda"
         self.eval = False
         self.load_allres = False
-        self.mode = "only filter" # "only filter" ,"source GS", "integration", "super sampling"
+        self.scale = 1
+        self.mode = "only-filter" # "only-filter" ,"source-GS", "integration", "super-sampling"
 
         super().__init__(parser, "Loading Parameters", sentinel)
 

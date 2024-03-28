@@ -58,13 +58,13 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
         mode = dataset.mode
 
-        assert mode in["only filter" ,"source GS","integration","super sampling"]
+        assert mode in["only-filter" ,"source-GS","integration","super-sampling"]
 
 
-        if mode == "only filter": mode=3
-        elif mode=="source GS": mode=0
+        if mode == "only-filter": mode=3
+        elif mode=="source-GS": mode=0
         elif mode=="integration": mode=1
-        elif mode=="super sampling": mode=2
+        elif mode=="super-sampling": mode=2
         else: raise Exception("Not allowed this mode")
 
         
