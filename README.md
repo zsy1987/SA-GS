@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  [<u>project page</u>]{https://kevinsong729.github.io/project-pages/SA-GS/}
+  [<u>project page</u>](https://kevinsong729.github.io/project-pages/SA-GS/)
 </p>
 <p align="center">
   <a href="">
