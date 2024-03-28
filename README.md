@@ -15,10 +15,12 @@ This repository is an official implementation for:
 </p>
 
 <p align="center">
-We introduce a scale-adaptive 2D filter and intregation(super sampling) method for 3D Gaussian Splatting (3DGS), eliminating multiple artifacts and achieving alias-free renderings.  
+We introduce SA-GS, a training-free approach that can be directly applied to the inference process of any pretrained 3DGS model to resolve its visual artefacts at drastically changed rendering settings.
 </p>
 <br>
 
+# Introduction
+3DGS has gained attention in the industry due to its high-quality view rendering and fast speeds. However, view quality degradation can occur during rendering depending on settings such as resolution, distance, and focal length. Existing methods address this issue by adding regularity to Gaussian primitives in both 3D and 2D space during training. However, these methods overlook a significant drawback of 3DGS when used with different rendering settings: the scale ambiguity problem. This issue directly results in the inability of 3DGS to utilise conventional anti-aliasing techniques. We propose and analyse this problem for the first time and correct this shortcoming by using only 2D scale-adaptive filters. Based on this, we use conventional antialiasing methods such as integration and super-sampling to solve the aliasing effect caused by insufficient sampling frequency. It is worth noting that our method is the first Gaussian anti-aliasing technique that does not require training. Therefore, it can be directly integrated into existing 3DGS models to enhance their anti-aliasing capabilities. The method was validated in both bounded and unbounded scenarios, and the experimental results demonstrate that it achieves robust anti-aliasing performance enhancement in the most efficient way, surpassing or equaling the current optimal settings.
 
 # Installation
 
