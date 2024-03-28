@@ -57,22 +57,25 @@ Eventually, **model** folder should look like this:
 |-- cfg_args
 ```
 
-# Train 3D gaussian splatting
+# Train(Vinilla 3D Gaussian Splatting)
 ```
-# single-scale training and single-scale testing on NeRF-synthetic dataset
-CUDA_VISIBLE_DEVICES=0 python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source GS
+# single-scale training on NeRF-Synthetic dataset
+python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source GS
+# multi-scale training on NeRF-Synthetic dataset
+
+# single-scale training on Mip-NeRF 360 dataset
 
 ```
 
-# Testing
+# Test(Our SA-GS Rendering)
 ```
 # single-scale training and single-scale testing on NeRF-synthetic dataset
-CUDA_VISIBLE_DEVICES=0  python render_blender.py -s /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting3/nerf_synthetic_multiscale/chair -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting3/out_blender/chair/single_scale_s1 --save_name output --eval --load_allres --mode integration
+python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --load_allres --mode integration
 
 
 
 # single-scale training and single-scale testing on the mip-nerf 360 dataset
-CUDA_VISIBLE_DEVICES=0 python render_360.py -s /data15/DISCOVER_winter2024/zhengj2401/360v2/bonsai -m /data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting/out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
+python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
 
 # mode "only filter" ,"source GS", "integration", "super sampling"
 
