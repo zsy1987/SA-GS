@@ -5,9 +5,7 @@
 </p>
 <p align="center">
 
-[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)
-
-[3DGS Model](https://kevinsong729.github.io/project-pages/SA-GS/)
+[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/) / [3DGS Model](https://kevinsong729.github.io/project-pages/SA-GS/)
 
 </p>
 <p align="center">
