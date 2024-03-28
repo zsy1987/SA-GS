@@ -3,8 +3,13 @@
   <h1 align="center">SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing</h1>
   
 </p>
+<p align="center">
 
-[project page](https://kevinsong729.github.io/project-pages/SA-GS/)
+[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)
+
+[3DGS Model](https://kevinsong729.github.io/project-pages/SA-GS/)
+
+</p>
 <p align="center">
   <a href="">
     <img src="./img/bicycle_zoomoutin.gif" alt="Logo" width="95%">
