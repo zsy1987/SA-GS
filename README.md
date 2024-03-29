@@ -71,16 +71,16 @@ python train.py -s /your/dataset/model/path -m /your/output/path --data_type 360
 ```
 
 # Render
-Render using our method. There are four modes to choose from: "source-GS", "only-filter", "integration", "super-sampling". 
+Render using our method. There are four modes to choose from: __source-GS__, __only-filter__, __integration__, __super-sampling__:
 ```
 # Multi-scale testing on NeRF-synthetic dataset
 python render_blender.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --load_allres --mode integration
 
 # Single-scale testing on NeRF-synthetic dataset
-python render_blender.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --downsample_rate 1 --mode integration 
+python render_blender.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --downsample_rate 8 --mode integration 
 
 # Single-scale testing on Mip-NeRF 360 dataset
-python render_360.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT -r 8 --mode integration
+python render_360.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --downsample_rate 8 --mode integration
 ```
 
 We support the user in choosing whether the dataset camera parameters or the custom track camera parameters are to be rendered：
