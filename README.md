@@ -60,13 +60,13 @@ Eventually, **model** folder should look like this:
 # Train(Vinilla 3D Gaussian Splatting)
 ```
 # single-scale training on NeRF-Synthetic dataset
-python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source-GS --resolution_str d0.png
+python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --resolution_str d0.png
 
 # multi-scale training on NeRF-Synthetic dataset
-python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --mode source-GS --load_allres
+python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --load_allres
 
 # single-scale training on Mip-NeRF 360 dataset
-python train.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_scale_1 --save_iterations 30000 --mode source-GS --scale 1
+python train.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_scale_1 --save_iterations 30000 --scale 1
 ```
 
 # Test(Our SA-GS Rendering)
@@ -77,7 +77,6 @@ python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_ble
 # Single-scale testing on NeRF-synthetic dataset
 python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --resolution_str d0.png --mode integration 
 
-
 # Single-scale testing on the mip-nerf 360 dataset
 python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
 
@@ -87,4 +86,4 @@ python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --s
 
 
 # Acknowledgements
-This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/SA-GS). Please follow the license of 3DGS. We thank all the authors for their great work and repos. 
+This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS and Mip-splatting. We thank all the authors for their great work and repos. 
