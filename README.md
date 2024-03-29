@@ -57,33 +57,37 @@ Eventually, **model** folder should look like this:
 |-- cfg_args
 ```
 
-# Train(Vinilla 3D Gaussian Splatting)
+# Train
+Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a pre-trained 3DGS model, e.g. downloaded from [here](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link), or a model that you have trained separately (satisfying the model catalogue specification above).
 ```
 # single-scale training on NeRF-Synthetic dataset
-python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --resolution_str d0.png
+python train.py -s /your/dataset/model/path -m /your/output/path --data_type blender --save_iterations 30000 --downsample_rate 1
 
 # multi-scale training on NeRF-Synthetic dataset
-python train.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_iterations 30000 --load_allres
+python train.py -s /your/dataset/model/path -m /your/output/path --data_type blender --save_iterations 30000 --load_allres
 
 # single-scale training on Mip-NeRF 360 dataset
-python train.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_scale_1 --save_iterations 30000 --scale 1
+python train.py -s /your/dataset/model/path -m /your/output/path --data_type 360v2 --save_iterations 30000 --downsample_rate 1
 ```
 
-# Test(Our SA-GS Rendering)
+# Render
+Render using our method. There are four modes to choose from: "source-GS", "only-filter", "integration", "super-sampling". 
 ```
 # Multi-scale testing on NeRF-synthetic dataset
-python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --load_allres --mode integration
+python render_blender.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --load_allres --mode integration
 
 # Single-scale testing on NeRF-synthetic dataset
-python render_blender.py -s ./SA-GS/nerf_synthetic_multiscale/chair -m ./out_blender/chair/single_scale --save_name output --eval --resolution_str d0.png --mode integration 
+python render_blender.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT --downsample_rate 1 --mode integration 
 
-# Single-scale testing on the mip-nerf 360 dataset
-python render_360.py -s ./SA-GS/360v2/bonsai -m ./out_360v2/bonsai/single_s4 --save_name outputs -r 8 --mode integration
+# Single-scale testing on Mip-NeRF 360 dataset
+python render_360.py -s /your/dataset/model/path -m /your/output/path --save_name OUTPUT -r 8 --mode integration
+```
 
-# mode "only-filter" ,"source-GS", "integration", "super-sampling"
+We support the user in choosing whether the dataset camera parameters or the custom track camera parameters are to be rendered：
 
 ```
 
+```
 
 # Acknowledgements
 This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS and Mip-splatting. We thank all the authors for their great work and repos. 
