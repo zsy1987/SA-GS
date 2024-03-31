@@ -27,8 +27,7 @@ from gaussian_renderer import GaussianModel
 import torch.nn.functional as F
 import time
 import json
-method = "blendertest_cc"
-model_path='/data15/DISCOVER_winter2024/zhengj2401/gaussian-splatting3/out_blender/chair/single_scale_s1'
+
 
 
 def get_train_cams(model_path):
@@ -46,26 +45,37 @@ def get_train_cams(model_path):
         train_cam_center = np.mean(np.array(train_position),axis=0)
         diff = np.abs(np.array(train_position)-train_cam_center)
         train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
+
     return train_meta_data, train_distance, train_rotations,train_cam_center
-train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
+
+def get_render_cams(jsonpath):
+    with open(jsonpath, 'r', encoding='utf-8') as file:
+        views = json.load(file)
+    return views
 
 
-def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
+
+def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
 
     makedirs(render_path, exist_ok=True)
- 
-    ###
-    # define your render cameras here
-    ###
 
 
-    fovx = np.arctan(train_meta_data['train_width']/train_meta_data['train_fx']/2)*2
-    fovy = np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)*2
+    train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
+
+    fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['fx']/2)
+    fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['fy']/2)
+
+
     render_cameras=list()
     for R,T in zip(train_rotations,train_position):
         render_cameras.append(Camera(None, R , T, fovx, fovy, \
                 np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+    
+    # views = get_render_cams(jsonpath)
+    # for view in views:
+    #     render_cameras.append(Camera(None, view['R'] , view['T'], view['fovx'], view['fovy'], \
+    #             np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     
     
  
@@ -92,7 +102,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
-        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
+        render_set(dataset.camera_trajectory,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
