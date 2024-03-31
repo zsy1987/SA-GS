@@ -52,7 +52,7 @@ class ModelParams(ParamGroup):
         self._source_path = ""
         self._model_path = ""
         self._images = "images"
-        self._resolution = -1
+        self._resolution = 1
         self.resolution_str = "d0.png"
         self.save_name = "source"
         self._white_background = False

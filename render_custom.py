@@ -47,7 +47,7 @@ def get_train_cams(model_path):
         diff = np.abs(np.array(train_position)-train_cam_center)
         train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
     return train_meta_data, train_distance, train_rotations,train_cam_center
-train_meta_data, train_distance, train_rotations,train_cam_center = get_train_cams(model_path)
+train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
 
 
 def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
@@ -59,7 +59,15 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     # define your render cameras here
     ###
 
-    render_cameras=[Camera()]
+
+    fovx = np.arctan(train_meta_data['train_width']/train_meta_data['train_fx']/2)*2
+    fovy = np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)*2
+    render_cameras=list()
+    for R,T in zip(train_rotations,train_position):
+        render_cameras.append(Camera(None, R , T, fovx, fovy, \
+                np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+    
+    
  
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
@@ -92,8 +100,7 @@ if __name__ == "__main__":
     model = ModelParams(parser, sentinel=False)
     pipeline = PipelineParams(parser)
     parser.add_argument("--iteration", default=-1, type=int)
-    parser.add_argument("--skip_train", action="store_true")
-    parser.add_argument("--skip_test", action="store_true")
+    parser.add_argument("--camera_trajectory", default="1.json", type=int)
     parser.add_argument("--quiet", action="store_true")
     args = get_combined_args(parser)
     print("Rendering " + args.model_path)
