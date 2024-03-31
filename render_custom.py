@@ -28,7 +28,7 @@ import torch.nn.functional as F
 import time
 import json
 
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
 def get_train_cams(model_path):
     jsonpath = os.path.join(model_path,'cameras.json')
@@ -46,7 +46,7 @@ def get_train_cams(model_path):
         diff = np.abs(np.array(train_position)-train_cam_center)
         train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
 
-    return train_meta_data, train_distance, train_rotations,train_cam_center
+    return train_meta_data, train_distance, train_rotations,train_cam_center,train_position
 
 def get_render_cams(jsonpath):
     with open(jsonpath, 'r', encoding='utf-8') as file:
@@ -55,7 +55,7 @@ def get_render_cams(jsonpath):
 
 
 
-def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
+def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
 
     makedirs(render_path, exist_ok=True)
@@ -63,14 +63,14 @@ def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians,
 
     train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
 
-    fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['fx']/2)
-    fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['fy']/2)
+    fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['train_fx']/2)
+    fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)
 
 
     render_cameras=list()
     for R,T in zip(train_rotations,train_position):
-        render_cameras.append(Camera(None, R , T, fovx, fovy, \
-                np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+        render_cameras.append(Camera(None, torch.tensor(R) , torch.tensor(T), fovx, fovy, \
+                torch.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     
     # views = get_render_cams(jsonpath)
     # for view in views:
@@ -102,7 +102,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
-        render_set(dataset.camera_trajectory,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
+        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
@@ -110,7 +110,9 @@ if __name__ == "__main__":
     model = ModelParams(parser, sentinel=False)
     pipeline = PipelineParams(parser)
     parser.add_argument("--iteration", default=-1, type=int)
-    parser.add_argument("--camera_trajectory", default="1.json", type=int)
+    # parser.add_argument("--camera_trajectory", default="1.json", type=int)
+    parser.add_argument("--skip_train", action="store_true")
+    parser.add_argument("--skip_test", action="store_true")
     parser.add_argument("--quiet", action="store_true")
     args = get_combined_args(parser)
     print("Rendering " + args.model_path)
