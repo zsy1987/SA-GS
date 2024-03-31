@@ -70,7 +70,7 @@ def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians,
     render_cameras=list()
     for R,T in zip(train_rotations,train_position):
         render_cameras.append(Camera(None, R , T, fovx, fovy, \
-                np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+                np.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     
     # views = get_render_cams(jsonpath)
     # for view in views:
@@ -102,7 +102,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
-        render_set(dataset.camera_trajectory,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
+        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
@@ -110,7 +110,9 @@ if __name__ == "__main__":
     model = ModelParams(parser, sentinel=False)
     pipeline = PipelineParams(parser)
     parser.add_argument("--iteration", default=-1, type=int)
-    parser.add_argument("--camera_trajectory", default="1.json", type=int)
+    parser.add_argument("--skip_train", action="store_true")
+    parser.add_argument("--skip_test", action="store_true")
+    # parser.add_argument("--camera_trajectory", default="n.json", type=int)
     parser.add_argument("--quiet", action="store_true")
     args = get_combined_args(parser)
     print("Rendering " + args.model_path)
