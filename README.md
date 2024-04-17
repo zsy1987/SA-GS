@@ -88,10 +88,20 @@ We support user-defined camera tracks and camera parameters for scene renderingï
 ```
 python render_custom.py -s /your/data/path -m /your/model/path --save_name OUTPUT --mode integration
 ```
-<!-- We provide functions to generate camera track json files from the , which you can modify manually to generate the track effects you want (pose interpolation, wrap around, forward, backward, etc.):
+We provide functions to generate camera track json files from the , which you can modify manually to generate the track effects you want (pose interpolation, wrap around, forward, backward, etc.):
 ```
 python ./utils/generate_tracks.py 
-``` -->
+```
+# Citing
+If you have used our work in your research, please consider citing our paper. This will be very helpful to us in conducting follow-up research and tracking the impact of this work.
+```
+@article{song2024sa,
+  title={SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing},
+  author={Song, Xiaowei and Zheng, Jv and Yuan, Shiran and Gao, Huan-ang and Zhao, Jingwei and He, Xiang and Gu, Weihao and Zhao, Hao},
+  journal={arXiv preprint arXiv:2403.19615},
+  year={2024}
+}
+```
 
 # Acknowledgements
 This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS and Mip-splatting. We thank all the authors for their great work and repos. 
