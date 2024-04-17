@@ -61,13 +61,13 @@ Eventually, **model** folder should look like this:
 Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a pre-trained 3DGS model, e.g. downloaded from [here](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link), or a model that you have trained separately (satisfying the model catalogue specification above).
 ```
 # single-scale training on NeRF-Synthetic dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --data_type blender --save_iterations 30000 --r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
 
 # multi-scale training on NeRF-Synthetic dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --data_type blender --save_iterations 30000 --load_allres
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --load_allres
 
 # single-scale training on Mip-NeRF 360 dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --data_type 360v2 --save_iterations 30000 --r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
 ```
 
 # Render
@@ -86,12 +86,9 @@ python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT -
 ## Render with user-defined camera tracks(parameters)
 We support user-defined camera tracks and camera parameters for scene rendering：
 ```
-python render_custom.py -s /your/data/path -m /your/model/path --save_name OUTPUT --camera_trajectory /your/tracks/file/path.json --mode integration
+python render_custom.py -s /your/data/path -m /your/model/path --save_name OUTPUT --mode integration
 ```
-We provide functions to generate camera track json files from the , which you can modify manually to generate the track effects you want (pose interpolation, wrap around, forward, backward, etc.):
-```
-python ./utils/generate_tracks.py 
-```
+
 
 # Acknowledgements
 This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS and Mip-splatting. We thank all the authors for their great work and repos. 
