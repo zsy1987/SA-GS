@@ -63,8 +63,8 @@ def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians,
 
     train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
 
-    fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['fx']/2)
-    fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['fy']/2)
+    fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['train_fx']/2)
+    fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)
 
 
     render_cameras=list()
