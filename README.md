@@ -78,10 +78,10 @@ Render using our method. There are four modes to choose from: source-GS, only-fi
 python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --load_allres --mode integration
 
 # Single-scale testing on NeRF-synthetic dataset
-python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --focal_rate 0.5 --mode integration 
+python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration 
 
 # Single-scale testing on Mip-NeRF 360 dataset
-python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --focal_rate 0.5 --mode integration
+python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration
 ```
 ## Render with user-defined camera tracks(parameters)
 We support user-defined camera tracks and camera parameters for scene rendering：
