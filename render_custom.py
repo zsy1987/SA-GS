@@ -46,7 +46,7 @@ def get_train_cams(model_path):
         diff = np.abs(np.array(train_position)-train_cam_center)
         train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
 
-    return train_meta_data, train_distance, train_rotations,train_cam_center
+    return train_meta_data, train_distance, train_rotations,train_cam_center,train_position
 
 def get_render_cams(jsonpath):
     with open(jsonpath, 'r', encoding='utf-8') as file:
@@ -69,8 +69,8 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
 
     render_cameras=list()
     for R,T in zip(train_rotations,train_position):
-        render_cameras.append(Camera(None, R , T, fovx, fovy, \
-                np.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+        render_cameras.append(Camera(None, np.array(R) , np.array(T), fovx, fovy, \
+                torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     
     # views = get_render_cams(jsonpath)
     # for view in views:
