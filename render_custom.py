@@ -55,7 +55,7 @@ def get_render_cams(jsonpath):
 
 
 
-def render_set(jsonpath,save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
+def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
 
     makedirs(render_path, exist_ok=True)
