@@ -77,8 +77,23 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
         w2c = np.linalg.inv(c2w)
         R = np.transpose(w2c[:3,:3])  
         T = w2c[:3, 3]
+     
+
+        if train_meta_data['train_width'] > 1600:
+            global WARNED
+            if not WARNED:
+                print("[ INFO ] Encountered quite large input images (>1.6K pixels width), rescaling to 1.6K.\n "
+                    "If this is not desired, please explicitly specify '--resolution/-r' as 1")
+                WARNED = True
+            global_down = train_meta_data['train_width'] / 1600
+        else:
+            global_down = 1
+     
+        scale = float(global_down) 
+        resolution = (int(train_meta_data['train_width'] / scale), int(train_meta_data['train_height'] / scale))
+
         render_cameras.append(Camera(None, R, T, fovx, fovy, \
-                torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+                torch.ones((3,resolution[0],resolution[1])), None, None, None))
     #----------------------------------------------------------------------
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
