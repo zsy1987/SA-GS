@@ -285,7 +285,7 @@ def readMultiScale(path, white_background,split, only_highres=False,resolution_s
         T = w2c[:3, 3]
 
         image = Image.open(image_path)
-
+ 
         im_data = np.array(image.convert("RGBA"))
 
         bg = np.array([1,1,1]) if white_background else np.array([0, 0, 0])
@@ -293,12 +293,12 @@ def readMultiScale(path, white_background,split, only_highres=False,resolution_s
         norm_data = im_data / 255.0
         arr = norm_data[:,:,:3] * norm_data[:, :, 3:4] + bg * (1 - norm_data[:, :, 3:4])
         image = Image.fromarray(np.array(arr*255.0, dtype=np.byte), "RGB")
-
+        
         fovx = focal2fov(meta["focal"][idx], image.size[0])
         fovy = focal2fov(meta["focal"][idx], image.size[1])
         FovY = fovy 
         FovX = fovx
-
+      
         cam_infos.append(CameraInfo(uid=idx, R=R, T=T, FovY=FovY, FovX=FovX, image=image,
                         image_path=image_path, image_name=image_name, width=image.size[0], height=image.size[1]))
     return cam_infos
