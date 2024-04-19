@@ -106,6 +106,7 @@ def get_combined_args(parser : ArgumentParser):
 
     try:
         cfgfilepath = os.path.join(args_cmdline.model_path, "cfg_args")
+        print(args_cmdline)
         print("Looking for config file in", cfgfilepath)
         with open(cfgfilepath) as cfg_file:
             print("Config file found: {}".format(cfgfilepath))

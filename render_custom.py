@@ -68,7 +68,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
 
     #------------------------define your cameras---------------------------
     # you can define your cameras here.
-    # For example, We use train cameras. 
+    # For example, We use 1/8 resolution train cameras. 
     render_cameras=list()
     for R0,T0 in zip(train_rotations,train_position):
         RT= np.concatenate((np.array(R0),np.array(T0).reshape(3,1)),axis=1)
@@ -78,12 +78,12 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
         R = np.transpose(w2c[:3,:3])  
         T = w2c[:3, 3]
         render_cameras.append(Camera(None, R, T, fovx, fovy, \
-                torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
+                torch.ones((3,train_meta_data['train_width'], train_meta_data['train_height'])), None, None, None))
     #----------------------------------------------------------------------
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
         kernel_ratio=train_meta_data['train_width']/view.image_width*train_distance/np.sqrt(np.sum((view.T-train_cam_center)**2))*train_meta_data['train_fx']/view.focal_x
-        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
+        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio, mode=mode)["render"]
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
     
 
