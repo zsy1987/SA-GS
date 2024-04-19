@@ -72,16 +72,9 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
         render_cameras.append(Camera(None, np.array(R) , np.array(T), fovx, fovy, \
                 torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     
-    # views = get_render_cams(jsonpath)
-    # for view in views:
-    #     render_cameras.append(Camera(None, view['R'] , view['T'], view['fovx'], view['fovy'], \
-    #             np.ones((train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
-    
-    
- 
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
-        kernel_ratio=train_meta_data['train_width']/view.image_width*train_distance/np.sqrt(np.sum((view.T-train_cam_center)**2))*train_meta_data['fx']/view.focal_x
+        kernel_ratio=train_meta_data['train_width']/view.image_width*train_distance/np.sqrt(np.sum((view.T-train_cam_center)**2))*train_meta_data['train_fx']/view.focal_x
         rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
     
