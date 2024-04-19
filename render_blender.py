@@ -40,7 +40,7 @@ def render_set(train_resolution,mode,save_name,model_path, name, iteration, view
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
         kernel_ratio=train_resolution/dict_width2resolution[gt.shape[-1]]
-        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode="1",mode=mode)["render"]
+        rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
         torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
