@@ -70,8 +70,14 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     # you can define your cameras here.
     # For example, We use train cameras. 
     render_cameras=list()
-    for R,T in zip(train_rotations,train_position):
-        render_cameras.append(Camera(None, np.array(R) , np.array(T), fovx, fovy, \
+    for R0,T0 in zip(train_rotations,train_position):
+        RT= np.concatenate((np.array(R0),np.array(T0).reshape(3,1)),axis=1)
+        extension_row = np.array([0,0,0,1]).reshape(1,4)
+        c2w = np.vstack((RT, extension_row))
+        w2c = np.linalg.inv(c2w)
+        R = np.transpose(w2c[:3,:3])  
+        T = w2c[:3, 3]
+        render_cameras.append(Camera(None, R, T, fovx, fovy, \
                 torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
     #----------------------------------------------------------------------
 
