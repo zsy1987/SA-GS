@@ -309,8 +309,12 @@ def readMultiScaleNerfSyntheticInfo(path, white_background, eval, load_allres=Fa
     train_cam_infos = readMultiScale(path, white_background, "train", only_highres=(not load_allres),resolution_str=resolution_str)
     print("number of training images:", len(train_cam_infos))
     print("Reading test from metadata.json")
-    test_cam_infos = readMultiScale(path, white_background, "val", only_highres=(not load_allres),resolution_str=resolution_str)
-    print("number of testing images:", len(test_cam_infos))
+    if eval:
+        test_cam_infos = readMultiScale(path, white_background, "val", only_highres=(not load_allres),resolution_str=resolution_str)
+        print("number of testing images:", len(test_cam_infos))
+    else:
+        test_cam_infos = readMultiScale(path, white_background, "test", only_highres=(not load_allres),resolution_str=resolution_str)
+        print("number of testing images:", len(test_cam_infos))
     if not eval:
         print("adding test cameras to training")
         train_cam_infos.extend(test_cam_infos)
