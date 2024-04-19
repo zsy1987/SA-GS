@@ -54,7 +54,7 @@ def get_render_cams(jsonpath):
 
 
 
-def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
+def render_set(save_name,model_path, name, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
 
     makedirs(render_path, exist_ok=True)
@@ -103,7 +103,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         scene = Scene(dataset, gaussians, load_iteration=iteration, shuffle=False,resolution_scales=[resolution])
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
-        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
+        render_set(dataset.save_name,dataset.model_path, "val", gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
