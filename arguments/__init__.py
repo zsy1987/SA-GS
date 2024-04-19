@@ -53,6 +53,7 @@ class ModelParams(ParamGroup):
         self._model_path = ""
         self._images = "images"
         self._resolution = 1
+        self.resolution_train = 1
         self.resolution_str = "d0.png"
         self.save_name = "source"
         self._white_background = False

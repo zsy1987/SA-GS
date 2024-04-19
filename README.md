@@ -75,13 +75,16 @@ python train.py -s /your/dataset/scene/path -m /your/output/path --save_iteratio
 Render using our method. There are four modes to choose from: source-GS, only-filter, integration and super-sampling:
 ```
 # Multi-scale testing on NeRF-synthetic dataset
-python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --load_allres --mode integration
+python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --load_allres --mode integration --resolution_train 1
 
 # Single-scale testing on NeRF-synthetic dataset
-python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration 
+python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration --resolution_train 1
 
 # Single-scale testing on Mip-NeRF 360 dataset
-python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration
+python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration --resolution_train 1
+
+-r "your render resolution"  --resolution_train "your train resolution"
+
 ```
 ## Render with user-defined camera tracks(parameters)
 We support user-defined camera tracks and camera parameters for scene rendering：

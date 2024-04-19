@@ -21,17 +21,17 @@ from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args
 from gaussian_renderer import GaussianModel
 import time
-def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
+def render_set(train_resolution,save_name,model_path, name, iteration, views, gaussians, pipeline, background,resolution,mode):
     render_path = os.path.join(model_path, name, save_name, "renders")
     gts_path = os.path.join(model_path, name, save_name, "gt")
 
     makedirs(render_path, exist_ok=True)
     makedirs(gts_path, exist_ok=True)
-    res_train = int(model_path[-1])
+    
 
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
-        kernel_ratio=res_train/resolution
+        kernel_ratio=train_resolution/resolution
         rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
@@ -42,6 +42,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
     with torch.no_grad():
         gaussians = GaussianModel(dataset.sh_degree)
         resolution=dataset.resolution
+        train_resolution=dataset.resolution_train
         dataset.resolution = -1
         mode = dataset.mode
 
@@ -59,7 +60,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
         bg_color = [1,1,1] if dataset.white_background else [0, 0, 0]
         background = torch.tensor(bg_color, dtype=torch.float32, device="cuda")
 
-        render_set(dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
+        render_set(train_resolution,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background,resolution,mode)
 
 if __name__ == "__main__":
     # Set up command line argument parser
