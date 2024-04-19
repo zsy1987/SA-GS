@@ -93,11 +93,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
         resolution = (int(train_meta_data['train_width'] / scale), int(train_meta_data['train_height'] / scale))
 
         render_cameras.append(Camera(None, R, T, fovx, fovy, \
-<<<<<<< HEAD
-                torch.ones((3,train_meta_data['train_width'], train_meta_data['train_height'])), None, None, None))
-=======
                 torch.ones((3,resolution[0],resolution[1])), None, None, None))
->>>>>>> e6fbe84ea2427a1d428d42393b9353ae18f1ccae
     #----------------------------------------------------------------------
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
