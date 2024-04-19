@@ -68,7 +68,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
 
     #------------------------define your cameras---------------------------
     # you can define your cameras here.
-    # For example, We use 1/8 resolution train cameras. 
+    # For example, We use train cameras. 
     render_cameras=list()
     for R0,T0 in zip(train_rotations,train_position):
         RT= np.concatenate((np.array(R0),np.array(T0).reshape(3,1)),axis=1)
@@ -93,7 +93,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
         resolution = (int(train_meta_data['train_width'] / scale), int(train_meta_data['train_height'] / scale))
 
         render_cameras.append(Camera(None, R, T, fovx, fovy, \
-                torch.ones((3,resolution[1],resolution[0])), None, None, None))
+                torch.ones((3,resolution[0],resolution[1])), None, None, None))
     #----------------------------------------------------------------------
 
 
