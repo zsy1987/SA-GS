@@ -21,13 +21,13 @@ from argparse import ArgumentParser
 from arguments import ModelParams, PipelineParams, get_combined_args
 from gaussian_renderer import GaussianModel
 import time
-def render_set(mode,save_name,model_path, name, iteration, views, gaussians, pipeline, background):
+def render_set(train_resolution,mode,save_name,model_path, name, iteration, views, gaussians, pipeline, background):
     render_path = os.path.join(model_path, name, save_name, "renders")
     gts_path = os.path.join(model_path, name, save_name, "gt")
 
     makedirs(render_path, exist_ok=True)
     makedirs(gts_path, exist_ok=True)
-    res_train = int(model_path[-1])
+
 
     dict_width2resolution={
         800:1,
@@ -39,7 +39,7 @@ def render_set(mode,save_name,model_path, name, iteration, views, gaussians, pip
      
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         gt = view.original_image[0:3, :, :]
-        kernel_ratio=res_train/dict_width2resolution[gt.shape[-1]]
+        kernel_ratio=train_resolution/dict_width2resolution[gt.shape[-1]]
         rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode="1",mode=mode)["render"]
         
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
@@ -52,6 +52,7 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
     with torch.no_grad():
         gaussians = GaussianModel(dataset.sh_degree)
         resolution=1
+        train_resolution=dataset.resolution_train
         if not dataset.load_allres:
             resolution = dataset.resolution
 
@@ -72,10 +73,10 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
 
         
         if not skip_train:
-            render_set(mode,dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background, kernel_ratio=1/resolution)
+            render_set(train_resolution,mode,dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background, kernel_ratio=1/resolution)
      
         if not skip_test:
-            render_set(mode,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTestCameras(scale=resolution), gaussians, pipeline, background ,kernel_ratio=1/resolution)
+            render_set(train_resolution,mode,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTestCameras(scale=resolution), gaussians, pipeline, background ,kernel_ratio=1/resolution)
 
 if __name__ == "__main__":
     # Set up command line argument parser
