@@ -283,7 +283,7 @@ def readMultiScale(path, white_background,split, only_highres=False,resolution_s
         w2c = np.linalg.inv(c2w)
         R = np.transpose(w2c[:3,:3])  # R is stored transposed due to 'glm' in CUDA code
         T = w2c[:3, 3]
-
+        
         image = Image.open(image_path)
  
         im_data = np.array(image.convert("RGBA"))
