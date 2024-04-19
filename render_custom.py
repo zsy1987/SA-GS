@@ -66,9 +66,29 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
     fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)
 
 
+    if train_meta_data['train_width'] > 1600:
+        global WARNED
+        if not WARNED:
+            print("[ INFO ] Encountered quite large input images (>1.6K pixels width), rescaling to 1.6K.\n "
+                "If this is not desired, please explicitly specify '--resolution/-r' as 1")
+            WARNED = True
+        global_down = train_meta_data['train_width'] / 1600.0
+    else:
+        global_down = 1.0
+             
+    train_meta_data['train_width'] = int(train_meta_data['train_width'] / global_down)
+    train_meta_data['train_height'] = int(train_meta_data['train_height'] / global_down)
+    train_meta_data['train_fx'] = train_meta_data['train_fx'] / global_down
+    train_meta_data['train_fy'] = train_meta_data['train_fy'] / global_down
+
+
     #------------------------define your cameras---------------------------
     # you can define your cameras here.
-    # For example, We use train cameras. 
+    # For example, We use 1 / 8 resolution train cameras. 
+    res_down_rate = 8
+    train_meta_data['train_fx'] /= res_down_rate
+    train_meta_data['train_fy'] /= res_down_rate
+    
     render_cameras=list()
     for R0,T0 in zip(train_rotations,train_position):
         RT= np.concatenate((np.array(R0),np.array(T0).reshape(3,1)),axis=1)
@@ -78,27 +98,15 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
         R = np.transpose(w2c[:3,:3])  
         T = w2c[:3, 3]
      
-
-        if train_meta_data['train_width'] > 1600:
-            global WARNED
-            if not WARNED:
-                print("[ INFO ] Encountered quite large input images (>1.6K pixels width), rescaling to 1.6K.\n "
-                    "If this is not desired, please explicitly specify '--resolution/-r' as 1")
-                WARNED = True
-            global_down = train_meta_data['train_width'] / 1600
-        else:
-            global_down = 1
-     
-        scale = float(global_down) 
-        resolution = (int(train_meta_data['train_width'] / scale), int(train_meta_data['train_height'] / scale))
-
         render_cameras.append(Camera(None, R, T, fovx, fovy, \
-                torch.ones((3,resolution[0],resolution[1])), None, None, None))
+                torch.ones((3, int(train_meta_data['train_height'] / res_down_rate), int(train_meta_data['train_width'] / res_down_rate))), None, None, None))
     #----------------------------------------------------------------------
 
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
-        kernel_ratio=resolution[0]/view.image_width*train_distance/np.sqrt(np.sum((view.T-train_cam_center)**2))*train_meta_data['train_fx']/view.focal_x
+        kernel_ratio = view.image_width / train_meta_data['train_width'] * \
+                       train_distance / np.sqrt(np.sum((view.T-train_cam_center)**2)) * \
+                       view.focal_x / train_meta_data['train_fx']
         rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
     
