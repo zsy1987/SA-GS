@@ -45,7 +45,6 @@ def get_train_cams(model_path):
         train_cam_center = np.mean(np.array(train_position),axis=0)
         diff = np.abs(np.array(train_position)-train_cam_center)
         train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
-
     return train_meta_data, train_distance, train_rotations,train_cam_center,train_position
 
 def get_render_cams(jsonpath):
@@ -67,11 +66,14 @@ def render_set(save_name,model_path, name, iteration, views, gaussians, pipeline
     fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)
 
 
+    #------------------------define your cameras---------------------------
+    # you can define your cameras here.
+    # For example, We use train cameras. 
     render_cameras=list()
     for R,T in zip(train_rotations,train_position):
         render_cameras.append(Camera(None, np.array(R) , np.array(T), fovx, fovy, \
                 torch.ones((3,train_meta_data['train_width'],train_meta_data['train_height'])), None, None, None))
-    
+    #----------------------------------------------------------------------
 
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
         kernel_ratio=train_meta_data['train_width']/view.image_width*train_distance/np.sqrt(np.sum((view.T-train_cam_center)**2))*train_meta_data['train_fx']/view.focal_x
