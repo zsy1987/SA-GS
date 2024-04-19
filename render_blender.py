@@ -73,10 +73,10 @@ def render_sets(dataset : ModelParams, iteration : int, pipeline : PipelineParam
 
         
         if not skip_train:
-            render_set(train_resolution,mode,dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background, kernel_ratio=1/resolution)
+            render_set(train_resolution,mode,dataset.model_path, "train", scene.loaded_iter, scene.getTrainCameras(scale=resolution), gaussians, pipeline, background)
      
         if not skip_test:
-            render_set(train_resolution,mode,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTestCameras(scale=resolution), gaussians, pipeline, background ,kernel_ratio=1/resolution)
+            render_set(train_resolution,mode,dataset.save_name,dataset.model_path, "val", scene.loaded_iter, scene.getTestCameras(scale=resolution), gaussians, pipeline, background)
 
 if __name__ == "__main__":
     # Set up command line argument parser
