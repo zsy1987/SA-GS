@@ -61,13 +61,13 @@ Eventually, **model** folder should look like this:
 Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a pre-trained 3DGS model, e.g. downloaded from [here](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link), or a model that you have trained separately (satisfying the model catalogue specification above).
 ```
 # single-scale training on NeRF-Synthetic dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 -r 1
 
 # multi-scale training on NeRF-Synthetic dataset
 python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --load_allres
 
 # single-scale training on Mip-NeRF 360 dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 -r 1
 ```
 
 # Render

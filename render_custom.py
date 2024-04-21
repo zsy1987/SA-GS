@@ -43,9 +43,9 @@ def get_train_cams(model_path):
         train_position = [d['position'] for d in data]
         train_rotations = [d['rotation'] for d in data]
         train_cam_center = np.mean(np.array(train_position),axis=0)
-        diff = np.abs(np.array(train_position)-train_cam_center)
-        train_distance = np.mean(np.sqrt(np.sum(diff**2,axis=1)))
-    return train_meta_data, train_distance, train_rotations,train_cam_center,train_position
+        diff = np.array(train_position) - train_cam_center
+        min_distance, max_distance = np.min(np.sqrt(np.sum(diff**2,axis=1))), np.max(np.sqrt(np.sum(diff**2,axis=1)))
+    return train_meta_data, min_distance, max_distance, train_rotations, train_cam_center, train_position
 
 def get_render_cams(jsonpath):
     with open(jsonpath, 'r', encoding='utf-8') as file:
@@ -60,7 +60,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
     makedirs(render_path, exist_ok=True)
 
 
-    train_meta_data, train_distance, train_rotations,train_cam_center,train_position = get_train_cams(model_path)
+    train_meta_data, min_distance, max_distance, train_rotations, train_cam_center, train_position = get_train_cams(model_path)
 
     fovx = 2 * np.arctan(train_meta_data['train_width']/train_meta_data['train_fx']/2)
     fovy = 2 * np.arctan(train_meta_data['train_height']/train_meta_data['train_fy']/2)
@@ -85,7 +85,7 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
     #------------------------define your cameras---------------------------
     # you can define your cameras here.
     # For example, We use 1 / 8 resolution train cameras. 
-    res_down_rate = 8
+    res_down_rate = 1
     train_meta_data['train_fx'] /= res_down_rate
     train_meta_data['train_fy'] /= res_down_rate
     
@@ -102,10 +102,15 @@ def render_set(save_name,model_path, name, gaussians, pipeline, background,resol
                 torch.ones((3, int(train_meta_data['train_height'] / res_down_rate), int(train_meta_data['train_width'] / res_down_rate))), None, None, None))
     #----------------------------------------------------------------------
 
-
     for idx, view in enumerate(tqdm(render_cameras, desc="Rendering progress")):
+        distance_ratio = 1.0
+        view_distance = np.sqrt(np.sum((train_position[idx]-train_cam_center)**2))
+        if view_distance < min_distance:
+            distance_ratio = view_distance / min_distance
+        elif view_distance > max_distance:
+            distance_ratio = view_distance / max_distance
         kernel_ratio = view.image_width / train_meta_data['train_width'] * \
-                       train_distance / np.sqrt(np.sum((view.T-train_cam_center)**2)) * \
+                       distance_ratio * \
                        view.focal_x / train_meta_data['train_fx']
         rendering = render(view, gaussians, pipeline, background, kernel_ratio=kernel_ratio,mode=mode)["render"]
         torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
