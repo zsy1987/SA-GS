@@ -28,7 +28,7 @@ We introduce SA-GS, a training-free approach that can be directly applied to the
 cd SA-GS
 conda create -n SA-GS python=3.9
 conda activate SA-GS
-pip install -r requirements.txt
+pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
 pip install submodules/simple-knn/
 pip install submodules/diff-gaussian-rasterization_new/
 ```
