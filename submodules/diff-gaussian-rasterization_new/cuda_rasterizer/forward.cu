@@ -471,34 +471,30 @@ renderCUDA(
 
 			// --------------------------------------------------------------------
 			else if (mode==1){
-				float pi = 3.1415926;
-				float pixel_weight = 0.5f;
+				float2 d_raw = { xy.x - pixf.x, xy.y - pixf.y };
+				float power_raw = -0.5f * (con_o.x * d_raw.x * d_raw.x + con_o.z * d_raw.y * d_raw.y) - con_o.y * d_raw.x * d_raw.y;
+				if (power_raw > 0.0f) continue;
+				float alpha_raw = min(0.99f, con_o.w * exp(power_raw));
+				if (alpha_raw < 1.0f / 255.0f) continue;
 
-				float theta = acos(eigen_vector_o.x);
-				pixel_weight = 1 / (2 * (std::sin(theta) + std::cos(theta)));
-
-				float offset[8] = {-1, 1, 1, 1, -1, -1, 1, -1};
-				float2 x_range = {10000.0f, -10000.0f};
-				float2 y_range = {10000.0f, -10000.0f};
-				for(int i1=0;i1<8;i1=i1+2){
-					float2 d = {-xy.x+(pixf.x+offset[i1]*pixel_weight), - xy.y+(pixf.y+offset[i1+1]*pixel_weight)};
-					float dot1 = d.x * eigen_vector_o.x + d.y * eigen_vector_o.y;
-					float dot2 = d.x * eigen_vector_o.z + d.y * eigen_vector_o.w;
-					x_range.x = min(x_range.x, dot1);
-					x_range.y = max(x_range.y, dot1);
-					y_range.x = min(y_range.x, dot2);
-					y_range.y = max(y_range.y, dot2);
-				}
-
-				x_range.x = x_range.x / sqrt(lambda.x);
-				x_range.y = x_range.y / sqrt(lambda.x);
-				y_range.x = y_range.x / sqrt(lambda.y);
-				y_range.y = y_range.y / sqrt(lambda.y);
+				float2 x_range = {1000.0f, -1000.0f};
+				float2 y_range = {1000.0f, -1000.0f};
+				float2 d = { -xy.x + pixf.x, -xy.y+pixf.y };
+				float dot1 = d.x * eigen_vector_o.x + d.y * eigen_vector_o.y;
+				float dot2 = d.x * eigen_vector_o.z + d.y * eigen_vector_o.w;
+				x_range.x = min(x_range.x, dot1-0.5f);
+				x_range.y = max(x_range.y, dot1+0.5f);
+				y_range.x = min(y_range.x, dot2-0.5f);
+				y_range.y = max(y_range.y, dot2+0.5f);
+				x_range.x = x_range.x / lambda.x;
+				x_range.y = x_range.y / lambda.x;
+				y_range.x = y_range.x / lambda.y;
+				y_range.y = y_range.y / lambda.y;
 
 				float alpha = 2*3.1416*con_o.w *\
 							(sqrt(lambda.x)*(0.5 * erfc(-x_range.y * sqrt(0.5f)) - 0.5 * erfc(-x_range.x * sqrt(0.5f))) *\
 							sqrt(lambda.y)*(0.5 * erfc(-y_range.y * sqrt(0.5f)) - 0.5 * erfc(-y_range.x * sqrt(0.5f))))/\
-							((x_range.y*sqrt(lambda.x)-x_range.x*sqrt(lambda.x))*(y_range.y*sqrt(lambda.y)-y_range.x*sqrt(lambda.y)));
+							((x_range.y*lambda.x-x_range.x*lambda.x)*(y_range.y*lambda.y-y_range.x*lambda.y));
 
 				alpha = min(0.99f, alpha);
 				if (alpha < 1.0f / 255.0f) continue;
@@ -515,6 +511,11 @@ renderCUDA(
 			}
 
 			else {
+				float2 d_raw = { xy.x - pixf.x, xy.y - pixf.y };
+				float power_raw = -0.5f * (con_o.x * d_raw.x * d_raw.x + con_o.z * d_raw.y * d_raw.y) - con_o.y * d_raw.x * d_raw.y;
+				if (power_raw > 0.0f) continue;
+				float alpha_raw = min(0.99f, con_o.w * exp(power_raw));
+				if (alpha_raw < 1.0f / 255.0f) continue;
 				int cnt = 0;
 				float alpha_with_T_all = 0.0f;
 				for(int i1=int(-sub/2);i1<=int(sub/2);++i1){
