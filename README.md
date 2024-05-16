@@ -1,12 +1,11 @@
 # SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing
   
-[[Paper](https://drive.google.com/file/d/1uVSdYOXreEuntpswW3HXV-TypKi-ZopQ/view?usp=drive_link)] | [[Project Page](https://kevinsong729.github.io/project-pages/SA-GS/)] | [[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
+[[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
 
 This repository is an official implementation for:
 
 **SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing**
 
-> Authors:  [_Xiaowei Song_*](https://kevinSONG729.github.io/), [_Jv Zheng_*](https://zsy1987.github.io/), _Shiran Yuan_, [_Huan-ang Gao_](https://c7w.tech/about/), _Jingwei Zhao_, _Xiang He_, _Weihao Gu_, [_Hao Zhao_](https://sites.google.com/view/fromandto)
 
 <p align="center">
   <a href="">
@@ -26,11 +25,11 @@ We introduce SA-GS, a training-free approach that can be directly applied to the
 
 ```
 cd SA-GS
-conda create -n SA-GS python=3.9
+conda create -y -n SA-GS python=3.8
 conda activate SA-GS
-pip install -r requirements.txt -f https://download.pytorch.org/whl/torch_stable.html
+pip install -r requirements.txt
 pip install submodules/simple-knn/
-pip install submodules/diff-gaussian-rasterization_new/
+pip install submodules/diff-gaussian-rasterization_new
 ```
 
 # Dataset
@@ -61,13 +60,13 @@ Eventually, **model** folder should look like this:
 Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a pre-trained 3DGS model, e.g. downloaded from [here](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link), or a model that you have trained separately (satisfying the model catalogue specification above).
 ```
 # single-scale training on NeRF-Synthetic dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 -r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
 
 # multi-scale training on NeRF-Synthetic dataset
 python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --load_allres
 
 # single-scale training on Mip-NeRF 360 dataset
-python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 -r 1
+python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 --r 1
 ```
 
 # Render
@@ -78,11 +77,13 @@ Render using our method. There are four modes to choose from: source-GS, only-fi
 python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --load_allres --mode integration --resolution_train 1 --eval
 
 # Single-scale testing on NeRF-synthetic dataset
-# -r "your render resolution"  --resolution_train "your train resolution"
-python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT -r 8 --mode integration --resolution_train 1 --eval
+python render_blender.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration --resolution_train 1 --eval
 
 # Single-scale testing on Mip-NeRF 360 dataset
-python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT -r 8 --mode integration --resolution_train 1
+python render_360.py -s /your/data/path -m /your/model/path --save_name OUTPUT --r 8 --mode integration --resolution_train 1
+
+-r "your render resolution"  --resolution_train "your train resolution"
+
 ```
 ## Render with user-defined camera tracks(parameters)
 We support user-defined camera tracks and camera parameters for scene renderingï¼š
@@ -90,16 +91,7 @@ We support user-defined camera tracks and camera parameters for scene renderingï
 python render_custom.py -s /your/data/path -m /your/model/path --save_name OUTPUT --mode integration
 ```
 
-# Citing
-If you have used our work in your research, please consider citing our paper. This will be very helpful to us in conducting follow-up research and tracking the impact of this work.
-```
-@article{song2024sa,
-  title={SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing},
-  author={Song, Xiaowei and Zheng, Jv and Yuan, Shiran and Gao, Huan-ang and Zhao, Jingwei and He, Xiang and Gu, Weihao and Zhao, Hao},
-  journal={arXiv preprint arXiv:2403.19615},
-  year={2024}
-}
-```
+
 
 # Acknowledgements
 This project is built upon [3DGS](https://github.com/graphdeco-inria/gaussian-splatting) and [Mip-splatting](https://github.com/autonomousvision/mip-splatting). Please follow the license of 3DGS and Mip-splatting. We thank all the authors for their great work and repos. 
