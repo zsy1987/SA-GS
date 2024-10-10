@@ -1,6 +1,4 @@
 # SA-GS: Scale-Adaptive Gaussian Splatting for Training-Free Anti-Aliasing
-  
-[[3DGS Model](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link)]
 
 This repository is an official implementation for:
 
@@ -44,7 +42,6 @@ Please download the data from the [Mip-NeRF 360](https://jonbarron.info/mipnerf3
 
 
 ## Model
-Please download and unzip models.zip from the [Google Drive](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link).
 Eventually, **model** folder should look like this:
 
 ```
@@ -57,7 +54,7 @@ Eventually, **model** folder should look like this:
 ```
 
 # Train
-Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a pre-trained 3DGS model, e.g. downloaded from [here](https://drive.google.com/drive/folders/10DC8iPt1RE5cp_b6b1naMoRlR2bsvlAa?usp=drive_link), or a model that you have trained separately (satisfying the model catalogue specification above).
+Our code integrates the training process of the vinilla 3DGS, which can be trained using the following code. Of course, you can also use a model that you have trained separately (satisfying the model catalogue specification above).
 ```
 # single-scale training on NeRF-Synthetic dataset
 python train.py -s /your/dataset/scene/path -m /your/output/path --save_iterations 30000 -r 1
